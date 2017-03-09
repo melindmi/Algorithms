@@ -24,6 +24,34 @@ void swap(int &a, int &b)
   b = temp;
 }
 
+int getMedianOfThreePos(vector<int>& a, int l, int r)
+{
+	int pos=l, middle;
+	
+	if((r-l)%2 == 0)
+	{
+		middle = (r+l)/2 - 1; // l + ((r-l)/2 - 1 )
+	}
+	else
+	{
+		middle = (r+l)/2;  // l + (r-l)/2
+	}
+	if(((a[l] <= a[middle]) && (a[middle] <= a[r-1])) || ((a[r-1] <= a[middle]) && (a[middle] <= a[l])))
+	{
+		pos = middle;	
+	}
+	else if(((a[middle] <= a[l]) &&(a[l] <= a[r-1])) || ((a[r-1] <= a[l]) && (a[l] <= a[middle])))
+	{
+		pos = l;
+	}
+	else if(((a[middle] <= a[r-1]) &&(a[r-1] <= a[l])) || ((a[l] <= a[r-1]) && (a[r-1] <= a[middle])))
+	{
+		pos = r-1;
+	}
+	
+	return pos;
+}
+
 int getPivot(vector<int>& a, int l, int r, string iPivotPos)
 {
 	if((iPivotPos != "first") && (iPivotPos != "last") && (iPivotPos != "median"))
@@ -40,7 +68,7 @@ int getPivot(vector<int>& a, int l, int r, string iPivotPos)
 	}
 	else if (iPivotPos == "median")
 	{
-			//TODO
+		swap(a[l], a[getMedianOfThreePos(a, l, r)]);	
 	}
 
 	return l;
@@ -52,7 +80,6 @@ int quick_sort(vector<int>& a, int l, int r, string iPivotPos)
 	int total_comparisons=0;
 	if((r-l) < 2)
 	{
-		//print(a);
 		return total_comparisons;
 	}
 	else
@@ -92,10 +119,9 @@ int testFromVector1(string iPivotPos)
 		vect.push_back(4);
 		vect.push_back(7);
 
-		//print(vect);
 		ret = quick_sort(vect, 0, vect.size(), iPivotPos);
 		cout << "Total comparisons for pivot on position "<< iPivotPos << " : " << ret << endl; 
-		//print(vect);
+		
 		return ret;
 }
 
@@ -114,10 +140,9 @@ int testFromFile(string iName, string iPivotPos)
 		file.close();
 	}
 
-	//print(vect);
 	ret = quick_sort(vect, 0, vect.size(), iPivotPos);
 	cout << "Total comparisons for pivot on position " << iPivotPos <<" : "<< ret << endl; 
-	//print(vect);
+	
 	return ret;
 }
 
@@ -135,8 +160,14 @@ int main(int argc, char** argv)
 	cout << ((587 == testFromFile("100.txt", "last")) ? "OK" : "FAILED") << endl;
 	cout << ((10184 == testFromFile("1000.txt", "last")) ? "OK" : "FAILED") << endl;
   
+	cout << ((13 == testFromVector1("median")) ? "OK" : "FAILED") << endl;
+	cout << ((21 == testFromFile("10.txt", "median")) ? "OK" : "FAILED") << endl;
+	cout << ((518 == testFromFile("100.txt", "median")) ? "OK" : "FAILED") << endl;
+	cout << ((8921 == testFromFile("1000.txt", "median")) ? "OK" : "FAILED") << endl;
+	
 	testFromFile("10000.txt", "first");
 	testFromFile("10000.txt", "last");
+	testFromFile("10000.txt", "median");
 	
 	return 0;
 }
